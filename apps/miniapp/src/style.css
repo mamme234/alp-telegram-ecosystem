@@ -1,0 +1,44 @@
+body.dark {
+  --bg: #0b1220;
+  --panel: #131c2b;
+  --text: #edf2ff;
+  --muted: #a5b4d3;
+  --border: #243046;
+  --primary-soft: rgba(96, 165, 250, 0.18);
+}
+
+body.dark .theme-toggle,
+body.dark .secondary,
+body.dark .nav {
+  background: rgba(10, 16, 25, 0.96);
+  color: var(--text);
+}
+
+body.dark .nav button {
+  color: var(--muted);
+}
+
+body.dark .nav button.active {
+  background: var(--primary-soft);
+  color: #dbeafe;
+}
+
+body.dark .item,
+body.dark .card,
+body.dark .stat,
+body.dark .empty,
+body.dark .secondary,
+body.dark .theme-toggle {
+  background: var(--panel);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+body.dark .button-row button.primary {
+  background: #60a5fa;
+  color: #08101d;
+}
+
+body.dark .hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+}
