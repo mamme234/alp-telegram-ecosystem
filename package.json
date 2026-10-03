@@ -1,0 +1,16 @@
+{
+  "name": "alp",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w @alp/backend\" \"npm run dev -w @alp/bot\" \"npm run dev -w @alp/miniapp\" \"npm run dev -w @alp/admin\"",
+    "build": "npm run build -w @alp/backend && npm run build -w @alp/bot && npm run build -w @alp/miniapp && npm run build -w @alp/admin",
+    "start": "npm run start -w @alp/backend && npm run start -w @alp/bot"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

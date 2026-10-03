@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: alp
+      POSTGRES_USER: alp
+      POSTGRES_PASSWORD: alp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./apps/backend
+    environment:
+      DATABASE_URL: postgresql://alp:alp@db:5432/alp
+      PORT: 4000
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_WEBAPP_URL: ${TELEGRAM_WEBAPP_URL}
+      ADMIN_SECRET: ${ADMIN_SECRET}
+      WITHDRAWAL_PROVIDER_ENABLED: ${WITHDRAWAL_PROVIDER_ENABLED:-false}
+      NODE_ENV: production
+    depends_on:
+      - db
+    ports:
+      - "4000:4000"
+
+volumes:
+  postgres_data:
