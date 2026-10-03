@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALP</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --text: #111827;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --primary: #1d4ed8;
+        --primary-soft: #dbeafe;
+        --success: #166534;
+        --warning: #b45309;
+        --danger: #b91c1c;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .app {
+        max-width: 440px;
+        margin: 0 auto;
+        padding: 18px 14px 80px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        font-size: 1rem;
+      }
+      .theme-toggle {
+        border: 1px solid var(--border);
+        background: white;
+        border-radius: 999px;
+        padding: 8px 12px;
+      }
+      .card {
+        background: var(--panel);
+        border-radius: 20px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+      }
+      .hero {
+        padding: 18px;
+        background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+        color: white;
+        border-radius: 24px;
+      }
+      .hero h2 { margin: 0; font-size: 1.5rem; }
+      .hero small { color: rgba(255,255,255,0.75); }
+      .balance {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-top: 12px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 18px 0;
+      }
+      .stat {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+      }
+      .stat-label {
+        color: var(--muted);
+        font-size: 0.74rem;
+      }
+      .stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-top: 6px;
+      }
+      .nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 440px;
+        margin: 0 auto;
+        background: rgba(255,255,255,0.96);
+        border-top: 1px solid var(--border);
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+        padding: 8px 8px 18px;
+        backdrop-filter: blur(8px);
+      }
+      .nav button {
+        border: 0;
+        background: transparent;
+        padding: 8px 4px;
+        border-radius: 12px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .nav button.active {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .section-title {
+        margin: 18px 0 10px;
+        font-weight: 800;
+      }
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .item {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--panel);
+      }
+      .pill {
+        background: #e0f2fe;
+        color: #0f172a;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-weight: 700;
+        font-size: 0.72rem;
+      }
+      .muted { color: var(--muted); }
+      .button-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      button.primary {
+        border: none;
+        background: var(--primary);
+        color: white;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-weight: 700;
+        flex: 1;
+      }
+      button.secondary {
+        border: 1px solid var(--border);
+        background: white;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-weight: 700;
+      }
+      .empty {
+        border: 1px dashed var(--border);
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+        color: var(--muted);
+        background: rgba(255,255,255,0.5);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b1220;
+          --panel: #131c2b;
+          --text: #edf2ff;
+          --muted: #a5b4d3;
+          --border: #243046;
+          --primary-soft: rgba(96, 165, 250, 0.18);
+          --shadow: none;
+        }
+        .nav {
+          background: rgba(10, 16, 25, 0.96);
+        }
+        .theme-toggle, .secondary {
+          background: #0f172a;
+          color: var(--text);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="topbar">
+        <div class="brand">ALP</div>
+        <button class="theme-toggle" id="themeToggle">Theme</button>
+      </div>
+
+      <section class="hero" id="hero"></section>
+      <div class="grid" id="stats"></div>
+
+      <div id="content"></div>
+    </div>
+
+    <nav class="nav" id="nav"></nav>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

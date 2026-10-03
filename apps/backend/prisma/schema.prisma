@@ -1,0 +1,249 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum TaskStatus {
+  AVAILABLE
+  IN_PROGRESS
+  PENDING_VERIFICATION
+  COMPLETED
+  REJECTED
+  EXPIRED
+}
+
+enum TaskType {
+  SOCIAL
+  SURVEY
+  ACTION
+  REFERRAL
+  OTHER
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum WalletTransactionType {
+  TASK_REWARD
+  REFERRAL_REWARD
+  ADJUSTMENT
+  WITHDRAWAL
+  WITHDRAWAL_REVERSAL
+  OTHER
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  PROCESSING
+  COMPLETED
+  REJECTED
+  CANCELLED
+}
+
+enum NotificationChannel {
+  TELEGRAM
+  DASHBOARD
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AuditAction {
+  ADMIN_LOGIN
+  USER_SUSPENSION
+  USER_REACTIVATION
+  TASK_CREATION
+  TASK_MODIFICATION
+  REWARD_ADJUSTMENT
+  WITHDRAWAL_APPROVAL
+  WITHDRAWAL_REJECTION
+  SYSTEM_SETTING_CHANGE
+  ANNOUNCEMENT_PUBLISH
+  BOT_NOTIFICATION
+}
+
+model User {
+  id              String             @id @default(uuid())
+  telegramUserId  BigInt             @unique
+  username        String?
+  firstName       String?
+  lastName        String?
+  photoUrl        String?
+  languageCode    String?
+  status          UserStatus         @default(ACTIVE)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  wallet          Wallet?
+  referralsAsReferrer Referral[]     @relation("UserReferrer")
+  referralsAsReferred Referral[]     @relation("UserReferred")
+  submissions     TaskSubmission[]
+  walletTransactions WalletTransaction[]
+  withdrawals     Withdrawal[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+}
+
+model Admin {
+  id          String   @id @default(uuid())
+  username    String   @unique
+  email       String?
+  secretHash  String
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  auditLogs   AuditLog[]
+}
+
+model Task {
+  id               String          @id @default(uuid())
+  title            String
+  description      String
+  reward           Int
+  type             TaskType
+  requirements     String?
+  status           TaskStatus      @default(AVAILABLE)
+  startAt          DateTime?
+  endAt            DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  submissions      TaskSubmission[]
+}
+
+model TaskSubmission {
+  id            String           @id @default(uuid())
+  userId        String
+  taskId        String
+  rewardAmount  Int
+  status        SubmissionStatus  @default(PENDING)
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  user          User              @relation(fields: [userId], references: [id])
+  task          Task              @relation(fields: [taskId], references: [id])
+
+  @@unique([userId, taskId])
+}
+
+model Referral {
+  id            String   @id @default(uuid())
+  referrerId    String
+  referredId    String?
+  referralCode  String   @unique
+  status        String   @default("ACTIVE")
+  createdAt     DateTime @default(now())
+  rewardAmount  Int      @default(0)
+
+  referrer      User     @relation("UserReferrer", fields: [referrerId], references: [id])
+  referred      User?    @relation("UserReferred", fields: [referredId], references: [id])
+
+  @@unique([referrerId, referredId])
+}
+
+model Wallet {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  availableBalance Int     @default(0)
+  pendingBalance  Int     @default(0)
+  totalEarned     Int     @default(0)
+  totalWithdrawn  Int     @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User    @relation(fields: [userId], references: [id])
+}
+
+model WalletTransaction {
+  id          String                 @id @default(uuid())
+  userId      String
+  type        WalletTransactionType
+  amount      Int
+  description String
+  reference   String                 @unique
+  status      String                 @default("SUCCESS")
+  createdAt   DateTime               @default(now())
+
+  user        User                   @relation(fields: [userId], references: [id])
+}
+
+model Withdrawal {
+  id             String            @id @default(uuid())
+  userId         String
+  amount         Int
+  method         String
+  destination    String?
+  status         WithdrawalStatus  @default(PENDING)
+  reason         String?
+  requestedAt    DateTime          @default(now())
+  reviewedAt     DateTime?
+
+  user           User              @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id          String             @id @default(uuid())
+  userId      String?
+  title       String
+  message     String
+  channel     NotificationChannel @default(TELEGRAM)
+  status      NotificationStatus  @default(QUEUED)
+  sentAt      DateTime?
+  createdAt   DateTime            @default(now())
+
+  user        User?               @relation(fields: [userId], references: [id])
+}
+
+model Announcement {
+  id          String             @id @default(uuid())
+  title       String
+  message     String
+  status      AnnouncementStatus  @default(DRAFT)
+  createdAt   DateTime            @default(now())
+  publishAt   DateTime?
+}
+
+model AuditLog {
+  id          String     @id @default(uuid())
+  adminId     String?
+  userId      String?
+  action      AuditAction
+  target      String?
+  metadata    String?
+  createdAt   DateTime   @default(now())
+
+  admin       Admin?     @relation(fields: [adminId], references: [id])
+  user        User?      @relation(fields: [userId], references: [id])
+}
+
+model SystemSetting {
+  id            String   @id @default(uuid())
+  key           String   @unique
+  value         String
+  description   String?
+  updatedAt     DateTime @updatedAt
+}

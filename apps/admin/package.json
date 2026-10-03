@@ -1,0 +1,13 @@
+{
+  "name": "@alp/admin",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3002",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4174"
+  },
+  "dependencies": {
+    "vite": "^5.4.10"
+  }
+}

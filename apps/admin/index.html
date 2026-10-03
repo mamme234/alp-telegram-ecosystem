@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALP Admin</title>
+    <style>
+      :root {
+        --bg: #f3f6fb;
+        --panel: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --primary: #1d4ed8;
+        --danger: #dc2626;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+      .shell { max-width: 1200px; margin: 0 auto; padding: 20px; }
+      .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+      .brand { font-weight: 800; letter-spacing: 0.06em; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+      .card { background: var(--panel); border: 1px solid var(--border); border-radius: 18px; padding: 18px; box-shadow: 0 8px 18px rgba(15,23,42,0.04); }
+      .metric { font-size: 1.8rem; font-weight: 800; }
+      .muted { color: var(--muted); }
+      .form { display: grid; gap: 10px; }
+      input, select, textarea, button { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font: inherit; }
+      button { background: var(--primary); color: white; border: none; cursor: pointer; }
+      .section { margin-top: 18px; }
+      .list { display: grid; gap: 10px; }
+      .row { display: flex; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+      .danger { background: var(--danger); }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="top">
+        <div class="brand">ALP ADMIN</div>
+      </div>
+
+      <div class="card">
+        <h3>Admin login</h3>
+        <div class="form" id="loginForm">
+          <input id="adminUsername" placeholder="Admin username" />
+          <input id="adminPassword" type="password" placeholder="Admin secret" />
+          <button id="loginButton">Login</button>
+        </div>
+      </div>
+
+      <div id="dashboard" style="display:none; margin-top: 18px;"></div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
